@@ -1,18 +1,18 @@
 <?php
 
-namespace RocketChat;
+namespace Baha2Odeh\RocketChat;
 
 use Httpful\Request;
-use RocketChat\Client;
 
-class Group extends Client {
+class Group {
 
 	public $id;
 	public $name;
 	public $members = array();
+	public $api;
 
-	public function __construct($name, $members = array()){
-		parent::__construct();
+	public function __construct($api,$name, $members = array()){
+		$this->api = $api;
 		if( is_string($name) ) {
 			$this->name = $name;
 		} else if( isset($name->_id) ) {
@@ -20,11 +20,11 @@ class Group extends Client {
 			$this->id = $name->_id;
 		}
 		foreach($members as $member){
-			if( is_a($member, '\RocketChat\User') ) {
+			if( is_a($member, '\Baha2Odeh\RocketChat\User') ) {
 				$this->members[] = $member;
 			} else if( is_string($member) ) {
 				// TODO
-				$this->members[] = new User($member);
+				$this->members[] = new User($api,$member);
 			}
 		}
 	}
@@ -110,22 +110,6 @@ class Group extends Client {
 	}
 
 	/**
-	* Deletes the private group.
-	*/
-	public function delete(){
-		$response = Request::post( $this->api . 'groups.delete' )
-			->body(array('roomId' => $this->id))
-			->send();
-
-		if( $response->code == 200 && isset($response->body->success) && $response->body->success == true ) {
-			return true;
-		} else {
-			echo( $response->body->error . "\n" );
-			return false;
-		}
-	}
-
-	/**
 	* Removes a user from the private group.
 	*/
 	public function kick( $user ){
@@ -163,42 +147,5 @@ class Group extends Client {
 		}
 	}
 
-        /**
-	 * Adds owner to the private group.
-	 */
-	public function addOwner( $user ) {
-
-		$userId = is_string($user) ? $user : $user->id;
-
-		$response = Request::post( $this->api . 'groups.addOwner' )
-			->body(array('roomId' => $this->id, 'userId' => $userId))
-			->send();
-
-		if( $response->code == 200 && isset($response->body->success) && $response->body->success == true ) {
-			return true;
-		} else {
-			echo( $response->body->error . "\n" );
-			return false;
-		}
-	}
-
-	/**
-	 * Removes owner of the private group.
-	 */
-	public function removeOwner( $user ) {
-
-		$userId = is_string($user) ? $user : $user->id;
-
-		$response = Request::post( $this->api . 'groups.removeOwner' )
-			->body(array('roomId' => $this->id, 'userId' => $userId))
-			->send();
-
-		if( $response->code == 200 && isset($response->body->success) && $response->body->success == true ) {
-			return true;
-		} else {
-			echo( $response->body->error . "\n" );
-			return false;
-		}
-	}
 }
 

@@ -1,8 +1,10 @@
 {
-    "name": "baha2odeh/yii2-rocket-chat-rest-client",
-    "description": "Rocket Chat REST API client in PHP.",
+    "name": "baha2odeh/rocket-chat-rest-client",
+    "description": "Yii2 Rocket Chat REST API client in PHP.",
     "autoload": {
-        "classmap": ["src/"]
+        "psr-4": {
+            "Baha2Odeh\\RocketChat\\": "src"
+        }
     },
     "minimum-stability": "stable",
     "require": {

@@ -1,4 +1,4 @@
-# Yii2 Rocket Chat REST API client in PHP
+# Rocket Chat REST API client in PHP
 
 Use this client if you need to connect to Rocket Chat with a software written
 in PHP, such as WordPress or Drupal.
@@ -11,7 +11,7 @@ to your `composer.json` file:
 ```json
 {
     "require": {
-        "Baha2Odeh/yii2-rocket-chat-rest-client": "dev-master"
+        "fab1en/rocket-chat-rest-client": "dev-master"
     }
 }
 ```
