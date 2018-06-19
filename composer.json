@@ -6,6 +6,7 @@
     },
     "minimum-stability": "stable",
     "require": {
+        "yiisoft/yii2": "*",
         "nategood/httpful": "*"
     }
 }
