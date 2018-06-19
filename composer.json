@@ -1,5 +1,5 @@
 {
-    "name": "fab1en/rocket-chat-rest-client",
+    "name": "Baha2Odeh/yii2-rocket-chat-rest-client",
     "description": "Rocket Chat REST API client in PHP.",
     "autoload": {
         "classmap": ["src/"]
