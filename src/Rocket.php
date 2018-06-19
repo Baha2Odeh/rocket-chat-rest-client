@@ -27,7 +27,7 @@ class Rocket extends Component
         if(empty($this->rest_api_root)){
             throw new \Exception('Required rest api root');
         }
-        $this->api = ROCKET_CHAT_INSTANCE . REST_API_ROOT;
+        $this->api = $this->rocket_chat_instance . $this->rest_api_root;
 
         // set template request to send and expect JSON
         $tmp = Request::init()
