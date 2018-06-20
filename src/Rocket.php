@@ -27,7 +27,7 @@ class Rocket extends Component
         if(empty($this->rest_api_root)){
             throw new \Exception('Required rest api root');
         }
-        $this->api = ROCKET_CHAT_INSTANCE . REST_API_ROOT;
+        $this->api = $this->rocket_chat_instance . $this->rest_api_root;
 
         // set template request to send and expect JSON
         $tmp = Request::init()
@@ -116,13 +116,10 @@ class Rocket extends Component
 
 
     /**
-     * @param $username
-     * @param $password
-     * @param array $fields
      * @return \Baha2Odeh\RocketChat\User
      */
-    public function user($username, $password, $fields = array()){
-        return new User($this->api,$username, $password, $fields);
+    public function user(){
+        return new User($this->api);
     }
 
     /**
