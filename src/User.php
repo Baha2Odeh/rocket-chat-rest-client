@@ -31,10 +31,10 @@ class User
      * @return bool|object
      * @throws \Httpful\Exception\ConnectionErrorException
      */
-    public function login($user, $pass, $save_auth)
+    public function login($user, $pass, $save_auth = false)
     {
         $response = Request::post($this->api . 'login')
-            ->body(array('user' => $this->username, 'password' => $this->password))
+            ->body(array('user' => $user, 'password' => $pass))
             ->send();
 
         if ($response->code == 200 && isset($response->body->status) && $response->body->status == 'success') {
