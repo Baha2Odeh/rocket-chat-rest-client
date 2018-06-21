@@ -11,57 +11,64 @@ to your `composer.json` file:
 ```json
 {
     "require": {
-        "baha2odeh/yii2-rocket-chat-rest-client": "1.1"
+        "baha2odeh/yii2-rocket-chat-rest-client": "dev-master"
     }
 }
 ```
 
 And run composer to update your dependencies:
 
-    $ curl -s http://getcomposer.org/installer | php
     $ php composer.phar update
 
-Then, import the `autoload.php` from your `vendor` folder.
 
-After this, you have to define some constants to point to your Rocket Chat instance
-
+After this, you have to register chat instance into components  
+common/config/main-local.php
 ```php
-define('REST_API_ROOT', '/api/v1/');
-define('ROCKET_CHAT_INSTANCE', 'https://my-rocket-chat-instance.example.org');
+ 'components' => [
+ 	.....
+ 	'chat' => [
+            'class' => '\Baha2Odeh\RocketChat\Rocket',
+            'rocket_chat_instance' => 'http://rocket-chat-server:3000',
+            'rest_api_root' => '/api/v1/'
+        ],
+
+ ]
+
 ```
 
 Finally, instance the classes you need:
 ```php
-$api = new \RocketChat\Client();
-echo $api->version(); echo "\n";
+$user = \Yii::$app->chat->user();
 
-// login as the main admin user
-$admin = new \RocketChat\User('my-admin-name', 'my-admin-password');
-if( $admin->login() ) {
-	echo "admin user logged in\n";
-};
-$admin->info();
-echo "I'm {$admin->nickname} ({$admin->id}) "; echo "\n";
-```
+        $info = [
+            'name'=>'name',
+            'username'=>'username',
+            'email'=>'username@email.com',
+            'pass'=>'123123123'
+        ];
 
-## Manage user
-```php
-// create a new user
-$newuser = new \RocketChat\User('new_user_name', 'new_user_password', array(
-	'nickname' => 'New user nickname',
-	'email' => 'newuser@example.org',
-));
-if( !$newuser->login(false) ) {
-	// actually create the user if it does not exist yet
-  $newuser->create();
-}
-echo "user {$newuser->nickname} created ({$newuser->id})\n";
+        if(($userInfo = $user->login($info['username'],$info['pass'],true))){
+            print_r($userInfo);
+        }else if($user->register($info) &&  ($userInfo = $user->login($info['username'],$info['pass'],true))){
+            print_r($userInfo);
+        }else{
+            die($user->error);
+        }
+
+
+
+
+        $group = \Yii::$app->chat->group('group-name',[$userInfo->userId]);
+
+        $group->create();
+
+        $group->postMessage('Hello world');
 ```
 
 ## Post a message
 ```php
 // create a new channel
-$channel = new \RocketChat\Channel( 'my_new_channel', array($newuser, $admin) );
+$channel = \Yii::$app->chat->channel( 'my_new_channel', array($newuser, $admin) );
 $channel->create();
 // post a message
 $channel->postMessage('Hello world');

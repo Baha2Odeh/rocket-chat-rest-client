@@ -68,7 +68,7 @@ class User
             return $response->body->user;
         } else {
             $this->error = $response->body->error;
-            $this->errorType = $response->body->errorType;
+            $this->errorType = !empty($response->body->errorType) ? $response->body->errorType : $response->body->error;
         }
 
         return false;
