@@ -91,6 +91,23 @@ class User
         return false;
     }
 
+
+    /**
+     * Gets a user’s information, limited to the caller’s permissions.
+     */
+    public function getUserInfoByUserName($username)
+    {
+        $response = Request::get($this->api . 'users.info?username=' . $username)->send();
+
+        if ($response->code == 200 && isset($response->body->success) && $response->body->success == true) {
+            return $response->body;
+        } else {
+            $this->error = $response->body->error;
+            $this->errorType = $response->body->error;
+        }
+        return false;
+    }
+
     /**
      * Deletes an existing user.
      */
