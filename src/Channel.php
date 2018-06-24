@@ -23,6 +23,9 @@ class Channel
         } else if( isset($name->_id) ) {
             $this->name = $name->name;
             $this->id = $name->_id;
+        }else if(isset($name['id'])) {
+            $this->name = !empty($name['name']) ? $name['name'] : ''; 
+            $this->id = $name['id'];
         }
         foreach($members as $member){
             if( is_a($member, '\Baha2Odeh\RocketChat\User') ) {
@@ -56,7 +59,7 @@ class Channel
             $this->id = $response->body->channel->_id;
             return $response->body->channel;
         } else {
-            echo( $response->body->error . "\n" );
+            //echo( $response->body->error . "\n" );
             return false;
         }
     }
@@ -71,7 +74,7 @@ class Channel
             $this->id = $response->body->channel->_id;
             return $response->body;
         } else {
-            echo( $response->body->error . "\n" );
+            //echo( $response->body->error . "\n" );
             return false;
         }
     }
@@ -92,8 +95,20 @@ class Channel
         if( $response->code == 200 && isset($response->body->success) && $response->body->success == true ) {
             return true;
         } else {
-            if( isset($response->body->error) )	echo( $response->body->error . "\n" );
-            else if( isset($response->body->message) )	echo( $response->body->message . "\n" );
+            //if( isset($response->body->error) )	echo( $response->body->error . "\n" );
+            //else if( isset($response->body->message) )	echo( $response->body->message . "\n" );
+            return false;
+        }
+    }
+
+    public function history(){
+        $response = Request::get( $this->api . 'channels.history?roomId=' . $this->id )->send();
+
+        if( $response->code == 200 && isset($response->body->success) && $response->body->success == true ) {
+    
+            return $response->body;
+        } else {
+            //echo( $response->body->error . "\n" );
             return false;
         }
     }
@@ -109,7 +124,7 @@ class Channel
         if( $response->code == 200 && isset($response->body->success) && $response->body->success == true ) {
             return true;
         } else {
-            echo( $response->body->error . "\n" );
+            //echo( $response->body->error . "\n" );
             return false;
         }
     }
@@ -128,7 +143,7 @@ class Channel
         if( $response->code == 200 && isset($response->body->success) && $response->body->success == true ) {
             return true;
         } else {
-            echo( $response->body->error . "\n" );
+            //echo( $response->body->error . "\n" );
             return false;
         }
     }
@@ -147,7 +162,7 @@ class Channel
         if( $response->code == 200 && isset($response->body->success) && $response->body->success == true ) {
             return true;
         } else {
-            echo( $response->body->error . "\n" );
+            //echo( $response->body->error . "\n" );
             return false;
         }
     }
