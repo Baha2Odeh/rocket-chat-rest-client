@@ -87,7 +87,7 @@ class Rocket extends Component
         if( $response->code == 200 && isset($response->body->success) && $response->body->success == true ) {
             $groups = array();
             foreach($response->body->groups as $group){
-                $groups[] = new Group(this->api,$group);
+                $groups[] = new Group($this->api,$group);
             }
             return $groups;
         } else {
@@ -105,7 +105,7 @@ class Rocket extends Component
         if( $response->code == 200 && isset($response->body->success) && $response->body->success == true ) {
             $groups = array();
             foreach($response->body->channels as $group){
-                $groups[] = new Channel(this->api,$group);
+                $groups[] = new Channel($this->api,$group);
             }
             return $groups;
         } else {
