@@ -154,4 +154,23 @@ class Channel
 
         return ( $response->code == 200 && isset($response->body->success) && $response->body->success == true ) ;
     }
+
+
+
+    /**
+     * Gets a channel's information, limited to the caller’s permissions.
+     * @param $name
+     * @return array|bool|object|string
+     * @throws \Httpful\Exception\ConnectionErrorException
+     */
+    public function getChannelInfoByName($name = null)
+    {
+        $name = empty($name) ? $this->name : $name;
+        $response = Request::get($this->api . 'channels.info?roomName=' . $name)->send();
+
+        if ($response->code == 200 && isset($response->body->success) && $response->body->success == true) {
+            return $response->body;
+        }
+        return false;
+    }
 }
