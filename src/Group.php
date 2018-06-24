@@ -22,73 +22,78 @@ class Group {
 			$this->name = !empty($name['name']) ? $name['name'] : ''; 
 			$this->id = $name['id'];
 		}
-		foreach($members as $member){
-			if( is_a($member, '\Baha2Odeh\RocketChat\User') ) {
-				$this->members[] = $member;
-			} else if( is_string($member) ) {
-				// TODO
-				$this->members[] = new User($api,$member);
-			}
-		}
+
+        $this->members = is_array($members) ? $members : [];
 	}
 
-	/**
-	* Creates a new private group.
-	*/
+    /**
+     * set loaded Group info
+     * @param $name
+     * @param $id
+     * @return $this
+     */
+    public function getGroupInfo($name,$id){
+        $this->name = $name;
+        $this->id = $id;
+        return $this;
+    }
+    /**
+     * Creates a new private group.
+     * @return bool
+     * @throws \Httpful\Exception\ConnectionErrorException
+     */
 	public function create(){
-		// get user ids for members
-		$members_id = array();
-		foreach($this->members as $member) {
-			if( is_string($member) ) {
-				$members_id[] = $member;
-			} else if( isset($member->username) && is_string($member->username) ) {
-				$members_id[] = $member->username;
-			}
-		}
+
 
 		$response = Request::post( $this->api . 'groups.create' )
-			->body(array('name' => $this->name, 'members' => $members_id))
+			->body(array('name' => $this->name, 'members' => $this->members))
 			->send();
 
 		if( $response->code == 200 && isset($response->body->success) && $response->body->success == true ) {
 			$this->id = $response->body->group->_id;
 			return $response->body->group;
-		} else {
-			//echo( $response->body->error . "\n" );
-			return false;
 		}
+
+		return false;
 	}
 
-	/**
-	* Retrieves the information about the private group, only if you’re part of the group.
-	*/
+    /**
+     * Retrieves the information about the private group, only if you’re part of the group.
+     * @return array|bool|object|string
+     * @throws \Httpful\Exception\ConnectionErrorException
+     */
 	public function info() {
 		$response = Request::get( $this->api . 'groups.info?roomId=' . $this->id )->send();
 
 		if( $response->code == 200 && isset($response->body->success) && $response->body->success == true ) {
 			$this->id = $response->body->group->_id;
 			return $response->body;
-		} else {
-			//echo( $response->body->error . "\n" );
-			return false;
 		}
+
+		return false;
 	}
 
+    /**
+     * Retrieves the information about the private group, only if you’re part of the group.
+     * @return array|bool|object|string
+     * @throws \Httpful\Exception\ConnectionErrorException
+     */
 	public function history(){
 		$response = Request::get( $this->api . 'groups.history?roomId=' . $this->id )->send();
 
 		if( $response->code == 200 && isset($response->body->success) && $response->body->success == true ) {
-	
 			return $response->body;
-		} else {
-			//echo( $response->body->error . "\n" );
-			return false;
 		}
+
+		return false;
 	}
 
-	/**
-	* Post a message in this group, as the logged-in user
-	*/
+    /**
+     * Post a message in this group, as the logged-in user
+     * @param $text
+     * @return bool
+     * @throws \Httpful\Exception\ConnectionErrorException
+     */
 	public function postMessage( $text ) {
 		$message = is_string($text) ? array( 'text' => $text ) : $text;
 		if( !isset($message['attachments']) ){
@@ -99,34 +104,28 @@ class Group {
 			->body( array_merge(array('channel' => '#'.$this->name), $message) )
 			->send();
 
-		if( $response->code == 200 && isset($response->body->success) && $response->body->success == true ) {
-			return true;
-		} else {
-			//if( isset($response->body->error) )	echo( $response->body->error . "\n" );
-			//else if( isset($response->body->message) )	echo( $response->body->message . "\n" );
-			return false;
-		}
+		return ( $response->code == 200 && isset($response->body->success) && $response->body->success == true );
 	}
 
-	/**
-	* Removes the private group from the user’s list of groups, only if you’re part of the group.
-	*/
+    /**
+     * Removes the private group from the user’s list of groups, only if you’re part of the group.
+     * @return bool
+     * @throws \Httpful\Exception\ConnectionErrorException
+     */
 	public function close(){
 		$response = Request::post( $this->api . 'groups.close' )
 			->body(array('roomId' => $this->id))
 			->send();
 
-		if( $response->code == 200 && isset($response->body->success) && $response->body->success == true ) {
-			return true;
-		} else {
-			//echo( $response->body->error . "\n" );
-			return false;
-		}
+		return ( $response->code == 200 && isset($response->body->success) && $response->body->success == true );
 	}
 
-	/**
-	* Removes a user from the private group.
-	*/
+    /**
+     * Removes a user from the private group.
+     * @param $user
+     * @return bool
+     * @throws \Httpful\Exception\ConnectionErrorException
+     */
 	public function kick( $user ){
 		// get group and user ids
 		$userId = is_string($user) ? $user : $user->id;
@@ -135,17 +134,15 @@ class Group {
 			->body(array('roomId' => $this->id, 'userId' => $userId))
 			->send();
 
-		if( $response->code == 200 && isset($response->body->success) && $response->body->success == true ) {
-			return true;
-		} else {
-			//echo( $response->body->error . "\n" );
-			return false;
-		}
+		return ( $response->code == 200 && isset($response->body->success) && $response->body->success == true ) ;
 	}
 
-	/**
-	 * Adds user to the private group.
-	 */
+    /**
+     * Adds user to the private group.
+     * @param $user
+     * @return bool
+     * @throws \Httpful\Exception\ConnectionErrorException
+     */
 	public function invite( $user ) {
 
 		$userId = is_string($user) ? $user : $user->id;
@@ -154,12 +151,7 @@ class Group {
 			->body(array('roomId' => $this->id, 'userId' => $userId))
 			->send();
 
-		if( $response->code == 200 && isset($response->body->success) && $response->body->success == true ) {
-			return true;
-		} else {
-			//echo( $response->body->error . "\n" );
-			return false;
-		}
+		return ( $response->code == 200 && isset($response->body->success) && $response->body->success == true ) ;
 	}
 
 }

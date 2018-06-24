@@ -58,17 +58,20 @@ $user = \Yii::$app->chat->user();
 
 
 
-        $group = \Yii::$app->chat->group('group-name',[$userInfo->userId]);
+        $group = $user->group('group-name',[$userInfo->userId]);
 
         $group->create();
 
         $group->postMessage('Hello world');
+       
+        
+       
 ```
 
 ## Post a message
 ```php
 // create a new channel
-$channel = \Yii::$app->chat->channel( 'my_new_channel', array($newuser, $admin) );
+$channel = $user->channel( 'my_new_channel', array($newuser, $admin) );
 $channel->create();
 // post a message
 $channel->postMessage('Hello world');

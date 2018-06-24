@@ -55,6 +55,7 @@ class User
 
     /**
      * @param array $info
+     * @return bool
      * @throws \Httpful\Exception\ConnectionErrorException
      */
     public function register($info)
@@ -76,6 +77,8 @@ class User
 
     /**
      * Gets a user’s information, limited to the caller’s permissions.
+     * @throws \Httpful\Exception\ConnectionErrorException
+     * @return bool
      */
     public function info()
     {
@@ -94,6 +97,9 @@ class User
 
     /**
      * Gets a user’s information, limited to the caller’s permissions.
+     * @param $username
+     * @return array|bool|object|string
+     * @throws \Httpful\Exception\ConnectionErrorException
      */
     public function getUserInfoByUserName($username)
     {
@@ -110,13 +116,14 @@ class User
 
     /**
      * Deletes an existing user.
+     * @throws \Httpful\Exception\ConnectionErrorException
+     * @return bool
+     * @throws \Exception
      */
     public function delete()
     {
-
-        // get user ID if needed
-        if (!isset($this->id)) {
-            $this->me();
+        if(empty($this->id)){
+            throw new \Exception("Required loggedIn User");
         }
         $response = Request::post($this->api . 'users.delete')
             ->body(array('userId' => $this->id))
@@ -130,4 +137,32 @@ class User
         }
         return false;
     }
+
+
+    /**
+     * @param $name
+     * @param array $members
+     * @return \Baha2Odeh\RocketChat\Channel
+     * @throws \Exception
+     */
+    public function channel($name, $members = array()){
+        if(empty($this->id)){
+            throw new \Exception("Required loggedIn User");
+        }
+        return new Channel($this->api,$name, $members);
+    }
+
+    /**
+     * @param $name
+     * @param array $members
+     * @return \Baha2Odeh\RocketChat\Group
+     * @throws \Exception
+     */
+    public function group($name, $members = array()){
+        if(empty($this->id)){
+            throw new \Exception("Required loggedIn User");
+        }
+        return new Group($this->api,$name, $members);
+    }
+
 }

@@ -27,45 +27,45 @@ class Channel
             $this->name = !empty($name['name']) ? $name['name'] : ''; 
             $this->id = $name['id'];
         }
-        foreach($members as $member){
-            if( is_a($member, '\Baha2Odeh\RocketChat\User') ) {
-                $this->members[] = $member;
-            } else if( is_string($member) ) {
-                // TODO
-                $this->members[] = new User($api,$member);
-            }
-        }
+        $this->members = is_array($members) ? $members : [];
     }
 
     /**
-     * Creates a new channel.
+     * set loaded channel info
+     * @param $name
+     * @param $id
+     * @return $this
+     */
+    public function setChannelInfo($name,$id){
+        $this->name = $name;
+        $this->id = $id;
+        return $this;
+    }
+
+    /**
+     * create new channel
+     * @return bool
+     * @throws \Httpful\Exception\ConnectionErrorException
+     * @throws \Exception
      */
     public function create(){
-        // get user ids for members
-        $members_id = array();
-        foreach($this->members as $member) {
-            if( is_string($member) ) {
-                $members_id[] = $member;
-            } else if( isset($member->username) && is_string($member->username) ) {
-                $members_id[] = $member->username;
-            }
-        }
-
         $response = Request::post( $this->api . 'channels.create' )
-            ->body(array('name' => $this->name, 'members' => $members_id))
+            ->body(array('name' => $this->name, 'members' => $this->members))
             ->send();
 
         if( $response->code == 200 && isset($response->body->success) && $response->body->success == true ) {
             $this->id = $response->body->channel->_id;
             return $response->body->channel;
-        } else {
-            //echo( $response->body->error . "\n" );
-            return false;
         }
+
+        return false;
     }
 
     /**
      * Retrieves the information about the channel.
+     * @return array|bool|object|string
+     * @throws \Httpful\Exception\ConnectionErrorException
+     * @throws \Exception
      */
     public function info() {
         $response = Request::get( $this->api . 'channels.info?roomId=' . $this->id )->send();
@@ -73,14 +73,14 @@ class Channel
         if( $response->code == 200 && isset($response->body->success) && $response->body->success == true ) {
             $this->id = $response->body->channel->_id;
             return $response->body;
-        } else {
-            //echo( $response->body->error . "\n" );
-            return false;
         }
+        return false;
     }
 
     /**
-     * Post a message in this channel, as the logged-in user
+     * @param $text
+     * @return bool
+     * @throws \Httpful\Exception\ConnectionErrorException
      */
     public function postMessage( $text ) {
         $message = is_string($text) ? array( 'text' => $text ) : $text;
@@ -91,46 +91,42 @@ class Channel
         $response = Request::post( $this->api . 'chat.postMessage' )
             ->body( array_merge(array('channel' => '#'.$this->name), $message) )
             ->send();
-
-        if( $response->code == 200 && isset($response->body->success) && $response->body->success == true ) {
-            return true;
-        } else {
-            //if( isset($response->body->error) )	echo( $response->body->error . "\n" );
-            //else if( isset($response->body->message) )	echo( $response->body->message . "\n" );
-            return false;
-        }
+        return ( $response->code == 200 && isset($response->body->success) && $response->body->success == true );
     }
 
+    /**
+     * @return array|bool|object|string
+     * @throws \Httpful\Exception\ConnectionErrorException
+     */
     public function history(){
         $response = Request::get( $this->api . 'channels.history?roomId=' . $this->id )->send();
 
         if( $response->code == 200 && isset($response->body->success) && $response->body->success == true ) {
     
             return $response->body;
-        } else {
-            //echo( $response->body->error . "\n" );
-            return false;
         }
+
+        return false;
     }
 
     /**
      * Removes the channel from the user’s list of channels.
+     * @throws \Httpful\Exception\ConnectionErrorException
+     * @return bool
      */
     public function close(){
         $response = Request::post( $this->api . 'channels.close' )
             ->body(array('roomId' => $this->id))
             ->send();
 
-        if( $response->code == 200 && isset($response->body->success) && $response->body->success == true ) {
-            return true;
-        } else {
-            //echo( $response->body->error . "\n" );
-            return false;
-        }
+        return ( $response->code == 200 && isset($response->body->success) && $response->body->success == true );
     }
 
     /**
      * Removes a user from the channel.
+     * @param $user
+     * @return bool
+     * @throws \Httpful\Exception\ConnectionErrorException
      */
     public function kick( $user ){
         // get channel and user ids
@@ -140,16 +136,13 @@ class Channel
             ->body(array('roomId' => $this->id, 'userId' => $userId))
             ->send();
 
-        if( $response->code == 200 && isset($response->body->success) && $response->body->success == true ) {
-            return true;
-        } else {
-            //echo( $response->body->error . "\n" );
-            return false;
-        }
+        return ( $response->code == 200 && isset($response->body->success) && $response->body->success == true );
     }
 
     /**
-     * Adds user to channel.
+     * @param $user
+     * @return bool
+     * @throws \Httpful\Exception\ConnectionErrorException
      */
     public function invite( $user ) {
 
@@ -159,11 +152,6 @@ class Channel
             ->body(array('roomId' => $this->id, 'userId' => $userId))
             ->send();
 
-        if( $response->code == 200 && isset($response->body->success) && $response->body->success == true ) {
-            return true;
-        } else {
-            //echo( $response->body->error . "\n" );
-            return false;
-        }
+        return ( $response->code == 200 && isset($response->body->success) && $response->body->success == true ) ;
     }
 }

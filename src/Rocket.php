@@ -123,6 +123,7 @@ class Rocket extends Component
     }
 
     /**
+     * @deprecated because all functions require loggedIn User
      * @param $name
      * @param array $members
      * @return \Baha2Odeh\RocketChat\Channel
@@ -132,6 +133,7 @@ class Rocket extends Component
     }
 
     /**
+     * @deprecated because all functions require loggedIn User
      * @param $name
      * @param array $members
      * @return \Baha2Odeh\RocketChat\Group
