@@ -79,7 +79,7 @@ class Group {
      * @throws \Httpful\Exception\ConnectionErrorException
      */
 	public function history(){
-		$response = Request::get( $this->api . 'groups.history?roomId=' . $this->id )->send();
+		$response = Request::get( $this->api . 'groups.history?count=100000&roomId=' . $this->id )->send();
 
 		if( $response->code == 200 && isset($response->body->success) && $response->body->success == true ) {
 			return $response->body;
