@@ -106,7 +106,19 @@ class Group {
 
 		return ( $response->code == 200 && isset($response->body->success) && $response->body->success == true );
 	}
+    
+	 /**
+     * Removes the private group from the user’s list of groups, only if you’re part of the group.
+     * @return bool
+     * @throws \Httpful\Exception\ConnectionErrorException
+     */
+    public function archive(){
+        $response = Request::post( $this->api . 'groups.archive' )
+            ->body(array('roomId' => $this->id))
+            ->send();
 
+        return ( $response->code == 200 && isset($response->body->success) && $response->body->success == true );
+    }
     /**
      * Removes the private group from the user’s list of groups, only if you’re part of the group.
      * @return bool
