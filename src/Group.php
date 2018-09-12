@@ -13,7 +13,7 @@ class Group {
 
 	public function __construct($api,$name, $members = array()){
 		$this->api = $api;
-		if( is_string($name) ) {
+		if( is_string($name)  || is_int($name)) {
 			$this->name = $name;
 		} else if( isset($name->_id) ) {
 			$this->name = $name->name;
