@@ -21,6 +21,8 @@ class Group {
 		}else if(isset($name['id'])) {
 			$this->name = !empty($name['name']) ? $name['name'] : ''; 
 			$this->id = $name['id'];
+		}else{
+			$this->name = $name;
 		}
 
         $this->members = is_array($members) ? $members : [];
