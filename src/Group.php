@@ -133,6 +133,20 @@ class Group {
 
 		return ( $response->code == 200 && isset($response->body->success) && $response->body->success == true );
 	}
+	
+ /**
+     * delete the group
+     * @return bool
+     * @throws \Httpful\Exception\ConnectionErrorException
+     */
+	public function delete(){
+		$response = Request::post( $this->api . 'groups.delete' )
+			->body(array('roomId' => $this->id))
+			->send();
+
+		return ( $response->code == 200 && isset($response->body->success) && $response->body->success == true );
+	}	
+	
 
     /**
      * Removes a user from the private group.
