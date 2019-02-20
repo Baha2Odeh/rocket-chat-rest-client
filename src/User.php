@@ -47,8 +47,8 @@ class User
             $this->id = $response->body->data->userId;
             return $response->body->data;
         } else {
-            $this->error = $response->body->message;
-            $this->errorType = $response->body->error;
+            $this->error = !empty($response->body->error) ? $response->body->error : '';
+            $this->errorType = !empty($response->body->errorType) ? $response->body->errorType : '';
         }
         return false;
     }
