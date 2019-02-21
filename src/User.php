@@ -61,9 +61,7 @@ class User
                 ->addHeader('X-User-Id', $userId);
             Request::ini($tmp);
             $this->id = $userId;
-            if($this->info()){
-                return true;
-            }
+            return $this->info();
         }catch (\Exception $exception){
 
         }
