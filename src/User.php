@@ -53,6 +53,22 @@ class User
         }
         return false;
     }
+    
+    public function loginByToken($userId,$authToken){
+        try{
+            $tmp = Request::init()
+                ->addHeader('X-Auth-Token', $authToken)
+                ->addHeader('X-User-Id', $userId);
+            Request::ini($tmp);
+            $this->id = $userId;
+            if($this->info()){
+                return true;
+            }
+        }catch (\Exception $exception){
+
+        }
+        return false;
+    }
 
     /**
      * @param array $info
