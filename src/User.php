@@ -47,6 +47,7 @@ class User
             $this->id = $response->body->data->userId;
             return $response->body->data;
         } else {
+            \Yii::error($response->body,'RocketUserLogin');
             $this->error = !empty($response->body->error) ? $response->body->error : '';
             $this->errorType = !empty($response->body->errorType) ? $response->body->errorType : '';
         }
@@ -68,6 +69,7 @@ class User
             $this->id = $response->body->user->_id;
             return $response->body->user;
         } else {
+            \Yii::error($response->body,'RocketUserRegister');
             $this->error = $response->body->error;
             $this->errorType = !empty($response->body->errorType) ? $response->body->errorType : $response->body->error;
         }
@@ -88,6 +90,7 @@ class User
             $this->id = $response->body->user->_id;
             return $response->body;
         } else {
+            \Yii::error($response->body,'RocketUserInfo');
             $this->error = $response->body->error;
             $this->errorType = $response->body->error;
         }
@@ -108,6 +111,7 @@ class User
         if ($response->code == 200 && isset($response->body->success) && $response->body->success == true) {
             return $response->body;
         } else {
+            \Yii::error($response->body,'RocketUserUsername');
             $this->error = $response->body->error;
             $this->errorType = $response->body->error;
         }
