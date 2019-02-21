@@ -53,7 +53,11 @@ class User
         }
         return false;
     }
-    
+    /**
+     * @param $userId
+     * @param $authToken
+     * @return bool|object
+     */ 
     public function loginByToken($userId,$authToken){
         try{
             $tmp = Request::init()
